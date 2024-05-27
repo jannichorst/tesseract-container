@@ -13,10 +13,7 @@ import subprocess
 import shutil
 import os
 
-
 from src.database import init_db
-
-app = FastAPI()
 
 DATABASE_URL = 'ocr_results.db'
 
