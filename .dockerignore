@@ -1,0 +1,21 @@
+# Ignore Python cache and compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.jpg
+*.pdf
+*.png
+*.ipynb
+*.db
+
+# Ignore .env files
+.env
+
+# Ignore log files
+*.log
+
+# Ignore specific directories
+docs/
+tests/
+data/
