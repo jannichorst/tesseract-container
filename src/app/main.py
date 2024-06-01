@@ -82,10 +82,8 @@ app = FastAPI(lifespan=lifespan)
 
 @app.post("/analyzeDocument/")
 async def upload_image(background_tasks: BackgroundTasks, file: UploadFile = File(...)):
-    # Validate file type
-    if not file.content_type.startswith("image/"):
-        raise HTTPException(status_code=400, detail="Invalid file type. Please upload an image.")
-    
+    # TODO: Validate file type and size
+
     contents = await file.read()
     task_id = str(uuid.uuid4())  # Generate a new UUID for each task
     start_datetime = datetime.now().isoformat()
