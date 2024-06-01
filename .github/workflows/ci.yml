@@ -33,9 +33,17 @@ jobs:
           load: true
           tags: ${{ env.TEST_TAG }}
       
-      - name: Test
+      - name: Install Node
+        uses: actions/setup-node@v4
+
+      - name: Install Newman
         run: |
-          docker run --rm ${{ env.TEST_TAG }}
+          npm install -g newman
+          npm install -g newman-reporter-htmlextra
+
+      - name: Run API test  
+        run: |
+          newman run tests/tesseract-api-test.postman_collection.json
       
       - name: Build and push
         uses: docker/build-push-action@v5
