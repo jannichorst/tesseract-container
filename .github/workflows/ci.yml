@@ -41,6 +41,9 @@ jobs:
           npm install -g newman
           npm install -g newman-reporter-htmlextra
 
+      - name: Start Container
+        run: docker run -d ${{ env.TEST_TAG }}
+
       - name: Run API test  
         run: |
           newman run tests/tesseract-api-test.postman_collection.json
