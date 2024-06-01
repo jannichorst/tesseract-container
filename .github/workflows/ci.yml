@@ -44,6 +44,23 @@ jobs:
       - name: Start Container
         run: docker run -d -p 8000:8000 ${{ env.TEST_TAG }} 
 
+      - name: Wait for service to be ready
+        run: |
+          # Wait for up to 60 seconds for the service to be ready
+          for i in {1..60}; do
+            if docker exec test_container curl -s http://localhost:8000/health; then
+              echo "Service is up!"
+              exit 0
+            fi
+            echo "Waiting for service to be ready... ($i)"
+            sleep 1
+          done
+          echo "Service did not become ready in time" && exit 1
+
+      - name: Check container logs
+        if: failure()
+        run: docker logs test_container
+        
       - name: Run API test  
         run: |
           newman run tests/tesseract-api-test.postman_collection.json
