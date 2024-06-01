@@ -1,7 +1,6 @@
+import logging
 from fastapi import FastAPI, File, UploadFile, BackgroundTasks, HTTPException
 from fastapi.responses import JSONResponse
-import cv2
-import numpy as np
 import pytesseract
 import sqlite3
 import asyncio
@@ -9,23 +8,45 @@ import uuid
 from datetime import datetime
 from contextlib import asynccontextmanager
 import subprocess
-#import psutil
 import shutil
 import os
+from PIL import Image
+from io import BytesIO
+from app.database import init_db, check_db_operations
 
-from src.database import init_db
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("uvicorn")
+logger.propagate = False
 
-DATABASE_URL = 'ocr_results.db'
+# Variables
+DB_PATH = 'app/ocr_results.db'
+PORT = 8000
+HOST = '0.0.0.0'
+
+def list_directory_structure(start_path="."):
+    directory_structure = {}
+    for root, dirs, files in os.walk(start_path):
+        folder = os.path.relpath(root, start_path)
+        subdir = directory_structure
+        if folder != ".":
+            for part in folder.split(os.sep):
+                subdir = subdir.setdefault(part, {})
+        subdir["files"] = files
+    return directory_structure
 
 async def process_image(contents, task_id):
     await asyncio.sleep(0)  # Yield control to the event loop
-    npimg = np.frombuffer(contents, np.uint8)
-    image = cv2.imdecode(npimg, cv2.IMREAD_COLOR)
-    height, width = image.shape[:2]
+    pil_image = Image.open(BytesIO(contents))
+        
+    width, height = pil_image.size
     
-    data = pytesseract.image_to_data(image, output_type=pytesseract.Output.DICT)
+    # Ensure the image is in RGB mode
+    pil_image = pil_image.convert("RGB")
     
-    conn = sqlite3.connect(DATABASE_URL)
+    data = pytesseract.image_to_data(pil_image, output_type=pytesseract.Output.DICT)
+    
+    conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     
     for i in range(len(data['level'])):
@@ -54,18 +75,22 @@ async def process_image(contents, task_id):
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
-    init_db(DATABASE_URL)
+    init_db(DB_PATH, logger)
     yield
 
 app = FastAPI(lifespan=lifespan)
 
-@app.post("/upload/")
+@app.post("/analyzeDocument/")
 async def upload_image(background_tasks: BackgroundTasks, file: UploadFile = File(...)):
+    # Validate file type
+    if not file.content_type.startswith("image/"):
+        raise HTTPException(status_code=400, detail="Invalid file type. Please upload an image.")
+    
     contents = await file.read()
     task_id = str(uuid.uuid4())  # Generate a new UUID for each task
     start_datetime = datetime.now().isoformat()
     
-    conn = sqlite3.connect(DATABASE_URL)
+    conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     cursor.execute('INSERT INTO jobs (uuid, file_name, start_datetime, status) VALUES (?, ?, ?, ?)',
                    (task_id, file.filename, start_datetime, 'in_progress'))
@@ -75,9 +100,9 @@ async def upload_image(background_tasks: BackgroundTasks, file: UploadFile = Fil
     background_tasks.add_task(process_image, contents, task_id)
     return JSONResponse(content={"task_id": task_id})
 
-@app.get("/result/{task_id}")
+@app.get("/analyzeResults/{task_id}")
 async def get_result(task_id: str):
-    conn = sqlite3.connect(DATABASE_URL)
+    conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     
     # Get job info
@@ -139,12 +164,6 @@ async def get_result(task_id: str):
 @app.get("/health")
 async def health_check():
     try:
-        # Check database connection
-        conn = sqlite3.connect(DATABASE_URL)
-        cursor = conn.cursor()
-        cursor.execute('SELECT 1')
-        conn.close()
-
         # Check Tesseract availability
         result = subprocess.run(['tesseract', '--version'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         if result.returncode != 0:
@@ -154,24 +173,44 @@ async def health_check():
         total, used, free = shutil.disk_usage("/")
         if free < 1 * 1024 * 1024 * 1024:  # Less than 1GB free space
             raise HTTPException(status_code=500, detail="Not enough disk space")
+        
+        # Check if db file exists
+        if not os.path.exists(DB_PATH):
+            for root, dirs, files in os.walk("."):
+                if "ocr_results.db" in files:
+                    found_path = os.path.join(root, "ocr_results.db")
+                    raise HTTPException(status_code=500, detail=f"Health check failed: Database file found at {found_path}, but not at the expected location.")
+            else:
+                raise FileNotFoundError("Database file not found")
 
-        """ # Check CPU usage
-        cpu_usage = psutil.cpu_percent(interval=1)
-        if cpu_usage > 90:  # CPU usage above 90%
-            raise HTTPException(status_code=500, detail="High CPU usage")
+                # Check database connection
+        
+        # Easy DB connection check
+        try:
+            conn = sqlite3.connect(DB_PATH)
+            cursor = conn.cursor()
+            cursor.execute('SELECT 1')
+            conn.commit()
+            conn.close()
+        except Exception as e:
+            raise HTTPException(status_code=500, detail="Could not connect to database.")
 
-        # Check memory usage
-        memory = psutil.virtual_memory()
-        if memory.available < 100 * 1024 * 1024:  # Less than 100MB available
-            raise HTTPException(status_code=500, detail="Low memory available")
- """
+        # Check database connection and operations
+        check_db_operations(DB_PATH)
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Health check failed: {e}")
     
     return JSONResponse(content={"status": "healthy"})
 
+@app.get("/fs")
+async def file_system_structure():
+    try:
+        structure = list_directory_structure()
+        return JSONResponse(content=structure)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to list file system structure: {e}")
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host=HOST, port=PORT)
