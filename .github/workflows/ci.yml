@@ -44,14 +44,14 @@ jobs:
       - name: Start Container
         run: docker run -d -p 8000:8000 ${{ env.TEST_TAG }} 
 
-      - name: Wait for service to be ready
+      - name: Docker PS
         run: docker ps
 
       - name: Wait for service to be ready
         run: |
           # Wait for up to 60 seconds for the service to be ready
           for i in {1..60}; do
-            if docker exec test_container curl -s http://localhost:8000/health; then
+            if curl -s http://localhost:8000/health; then
               echo "Service is up!"
               exit 0
             fi
