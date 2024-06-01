@@ -260,7 +260,7 @@
 		},
 		{
 			"key": "base_url",
-			"value": "http://localhost:8000"
+			"value": "http://0.0.0.0:8000"
 		},
 		{
 			"key": "test_image",
