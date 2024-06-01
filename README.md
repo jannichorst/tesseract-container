@@ -22,7 +22,8 @@ This repository contains a FastAPI application that uses [Tesseract OCR](https:/
     ```sh
     ./scripts/build_and_run.sh
     ```
-3. Check out the Swagger documentation under [http://localhost:8000/docs](http://localhost:8000/docs).
+3. Access the Swagger documentation under [http://localhost:8000/docs](http://localhost:8000/docs).
+4. Checkout the examples in [demo.ipynb](demo.ipynb)
 
 ## Endpoints
 
@@ -85,7 +86,7 @@ curl "http://localhost:8000/fs"
 
 ## Examples
 
-This repository includes a Jupyter notebook called `demo.ipynb` which contains examples on how to use the provided endpoints. You can find the notebook in the root directory of the repository.
+This repository includes a Jupyter notebook called [demo.ipynb](demo.ipynb) which contains examples on how to use the provided endpoints. You can find the notebook in the root directory of the repository.
 
 ## Source Code
 
@@ -106,7 +107,7 @@ tesseract-container
     ├── requirements.txt
     └── app
         ├── main.py
-        └── other_files.py
+        └── ...
 ```
 
 ## References
