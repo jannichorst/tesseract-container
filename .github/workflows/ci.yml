@@ -42,7 +42,7 @@ jobs:
           npm install -g newman-reporter-htmlextra
 
       - name: Start Container
-        run: docker run -d ${{ env.TEST_TAG }}
+        run: docker run -d -p 8000:8000 ${{ env.TEST_TAG }} 
 
       - name: Run API test  
         run: |
