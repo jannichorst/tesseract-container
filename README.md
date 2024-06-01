@@ -23,7 +23,11 @@ This repository contains a FastAPI application that uses [Tesseract OCR](https:/
     ./scripts/build_and_run.sh
     ```
 3. Access the Swagger documentation under [http://localhost:8000/docs](http://localhost:8000/docs).
-4. Checkout the examples in [demo.ipynb](demo.ipynb)
+4. Checkout the examples in [demo.ipynb](demo.ipynb) and install the required packages with:
+    ```sh
+    pip install -r requirements.txt
+    ``` 
+    
 
 ## Endpoints
 
