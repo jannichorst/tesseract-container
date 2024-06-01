@@ -1,5 +1,3 @@
-Sure, here is the updated README with the additional information about the Jupyter notebook:
-
 # Tesseract Container
 
 This repository contains a FastAPI application that uses [Tesseract OCR](https://github.com/tesseract-ocr/tesseract) to extract text from images. The application exposes several endpoints to upload images, retrieve analysis results and check the health of the service.
