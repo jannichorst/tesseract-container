@@ -45,7 +45,7 @@ jobs:
         run: docker run -d -p 8000:8000 ${{ env.TEST_TAG }} 
 
       - name: Wait for service to be ready
-        run: docker -ps
+        run: docker ps
         
       - name: Run API test  
         run: |
