@@ -5,4 +5,7 @@ SCRIPT_DIR=$(dirname "$0")
 cd "$SCRIPT_DIR/.."
 
 # Build the Docker image
-docker build -t tesseract-ocr .
+# To add more languages, add them to the TESS_LANGS argument like: --build-arg TESS_LANGS="eng deu spa fra ..."
+# See the list of available languages and language codes at: https://tesseract-ocr.github.io/tessdoc/Data-Files
+
+docker build --build-arg TESS_LANGS="eng" -t tesseract-ocr .
