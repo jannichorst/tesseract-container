@@ -1080,18 +1080,18 @@
 			"value": "http://0.0.0.0:8000"
 		},
 		{
-			"key": "test_jpg",
-			"value": "test_jpeg.jpeg",
+			"key": "tests/test_jpg",
+			"value": "tests/test_jpeg.jpeg",
 			"type": "string"
 		},
 		{
-			"key": "test_png",
-			"value": "test_png.png",
+			"key": "tests/test_png",
+			"value": "tests/test_png.png",
 			"type": "string"
 		},
 		{
-			"key": "test_pdf",
-			"value": "test_doc.pdf\n",
+			"key": "tests/test_pdf",
+			"value": "tests/test_doc.pdf\n",
 			"type": "string"
 		},
 		{
