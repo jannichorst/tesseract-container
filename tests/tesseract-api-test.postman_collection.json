@@ -1081,17 +1081,17 @@
 		},
 		{
 			"key": "test_jpg",
-			"value": "/Users/jannichorst/Documents/code/tesseract-container/tests/test_jpeg.jpeg",
+			"value": "test_jpeg.jpeg",
 			"type": "string"
 		},
 		{
 			"key": "test_png",
-			"value": "/Users/jannichorst/Documents/code/tesseract-container/tests/test_png.png",
+			"value": "test_png.png",
 			"type": "string"
 		},
 		{
 			"key": "test_pdf",
-			"value": "/Users/jannichorst/Documents/code/tesseract-container/tests/test_doc.pdf\n",
+			"value": "test_doc.pdf\n",
 			"type": "string"
 		},
 		{
