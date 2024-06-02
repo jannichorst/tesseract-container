@@ -60,18 +60,10 @@ jobs:
           done
           echo "Service did not become ready in time" && exit 1
           
-      - name: Run Health Check Test
+      - name: API Tests
         run: |
-          newman run tests/tesseract-api-test.postman_collection.json --folder "Check Health"
+          newman run tests/tesseract-api-test.postman_collection.json --delay-request 1000
 
-      - name: Run Analyze Document Test
-        run: |
-          newman run tests/tesseract-api-test.postman_collection.json --folder "Analyze Document"
-
-      - name: Run Analyze Results Test
-        run: |
-          newman run tests/tesseract-api-test.postman_collection.json --folder "Analyze Results"
-      
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
