@@ -62,7 +62,7 @@ jobs:
           
       - name: API Tests
         run: |
-          newman run tests/tesseract-api-test.postman_collection.json --delay-request 1000
+          newman run tests/tesseract-api-test.postman_collection.json --delay-request 10000
 
       - name: Build and push
         uses: docker/build-push-action@v5
