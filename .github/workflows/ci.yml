@@ -1,4 +1,4 @@
-name: ci
+name: CI
 
 on:
   push:
@@ -8,7 +8,7 @@ env:
   LATEST_TAG: jannichorst/tesseract-ocr:latest
 
 jobs:
-  docker:
+  CI:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -26,7 +26,7 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       
-      - name: Build and export to Docker
+      - name: Test build and export 
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -41,14 +41,10 @@ jobs:
           npm install -g newman
           npm install -g newman-reporter-htmlextra
 
-      - name: Start Container
-        run: docker run -d -p 8000:8000 ${{ env.TEST_TAG }} 
-
-      - name: Docker PS
-        run: docker ps
-
-      - name: Wait for service to be ready
-        run: |
+      - name: Start container
+        run:  |
+          docker run -d -p 8000:8000 ${{ env.TEST_TAG }} 
+          
           # Wait for up to 60 seconds for the service to be ready
           for i in {1..60}; do
             if curl -s http://localhost:8000/health; then
@@ -59,10 +55,10 @@ jobs:
             sleep 1
           done
           echo "Service did not become ready in time" && exit 1
-          
-      - name: API Tests
+
+      - name: Test API endpoints
         run: |
-          newman run tests/tesseract-api-test.postman_collection.json --delay-request 10000
+          newman run tests/tesseract-api-test.postman_collection.json --delay-request 5000
 
       - name: Build and push
         uses: docker/build-push-action@v5
