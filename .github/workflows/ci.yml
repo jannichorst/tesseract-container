@@ -66,4 +66,6 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
+          sbom: true
+          provenance: mode=max
           tags: ${{ env.LATEST_TAG }}
