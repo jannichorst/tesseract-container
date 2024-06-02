@@ -8,6 +8,9 @@ ENV PYTHONUNBUFFERED=1
 # Set the working directory in the container
 WORKDIR /code
 
+# Update pip and setuptools to the latest version
+RUN pip install --no-cache-dir --upgrade pip setuptools
+
 # Install dependencies
 COPY ./src/requirements.txt /code/requirements.txt
 RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
