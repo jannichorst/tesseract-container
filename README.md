@@ -199,7 +199,7 @@ tesseract-container
 │   ├── requirements.txt
 │   └── app
 │       ├── main.py
-│       └── ...
+│       ├── ...
 └── tests
     ├── postman_collection.json
     ├── test-image.jpg
