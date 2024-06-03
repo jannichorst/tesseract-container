@@ -76,6 +76,7 @@ jobs:
           for i in {1..60}; do
             if curl -s http://localhost:8000/health; then
               echo "Service is up!"
+              sleep 5
               exit 0
             fi
             echo "Waiting for service to be ready... ($i)"
@@ -85,7 +86,7 @@ jobs:
 
       - name: Test API endpoints
         run: |
-          newman run tests/tesseract-api-test.postman_collection.json --delay-request 20000
+          newman run tests/light-api-test.postman_collection.json --delay-request 20000
 
   push:
     runs-on: ubuntu-latest
