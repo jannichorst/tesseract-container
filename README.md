@@ -200,10 +200,10 @@ tesseract-container
 │   └── app
 │       ├── main.py
 │       └── ...
-├── tests
-│   ├── postman_collection.json
-│   ├── test-image.jpg
-│   └── ...
+└── tests
+    ├── postman_collection.json
+    ├── test-image.jpg
+    └── ...
 ```
  <a name="references"/> 
 
