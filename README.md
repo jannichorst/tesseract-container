@@ -43,7 +43,7 @@ file_path = "path_to_your_image_or_pdf.jpg"
 
 with open(file_path, "rb") as file:
     files = {"file": file}
-    response = requests.post(url, files=files, data=params)
+    response = requests.post(url, files=files)
 
 print("OCR Result:", response.json())
 ```
