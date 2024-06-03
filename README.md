@@ -1,4 +1,4 @@
-![CI Worklfow](https://github.com/jannichorst/tesseract-container/actions/workflows/ci.yml/badge.svg)
+![CI Worklfow](https://github.com/jannichorst/tesseract-container/actions/workflows/ci.yml/badge.svg) ![Docker Badge](https://hub.docker.com/repository/docker/jannichorst/tesseract-ocr)
 
 # Tesseract Container
 
