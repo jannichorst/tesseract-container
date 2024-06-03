@@ -1,0 +1,564 @@
+{
+	"info": {
+		"_postman_id": "c07571e3-f468-45e8-aa0a-b11941f4c277",
+		"name": "Tesseract Container Check",
+		"description": "# 🚀 Get started here\n\nThis template guides you through CRUD operations (GET, POST, PUT, DELETE), variables, and tests.\n\n## 🔖 **How to use this template**\n\n#### **Step 1: Send requests**\n\nRESTful APIs allow you to perform CRUD operations using the POST, GET, PUT, and DELETE HTTP methods.\n\nThis collection contains each of these [request](https://learning.postman.com/docs/sending-requests/requests/) types. Open each request and click \"Send\" to see what happens.\n\n#### **Step 2: View responses**\n\nObserve the response tab for status code (200 OK), response time, and size.\n\n#### **Step 3: Send new Body data**\n\nUpdate or add new data in \"Body\" in the POST request. Typically, Body data is also used in PUT request.\n\n```\n{\n    \"name\": \"Add your name in the body\"\n}\n\n ```\n\n#### **Step 4: Update the variable**\n\nVariables enable you to store and reuse values in Postman. We have created a [variable](https://learning.postman.com/docs/sending-requests/variables/) called `base_url` with the sample request [https://postman-api-learner.glitch.me](https://postman-api-learner.glitch.me). Replace it with your API endpoint to customize this collection.\n\n#### **Step 5: Add tests in the \"Scripts\" tab**\n\nAdding tests to your requests can help you confirm that your API is working as expected. You can write test scripts in JavaScript and view the output in the \"Test Results\" tab.\n\n<img src=\"https://content.pstmn.io/fa30ea0a-373d-4545-a668-e7b283cca343/aW1hZ2UucG5n\" alt=\"\" height=\"1530\" width=\"2162\">\n\n## 💪 Pro tips\n\n- Use folders to group related requests and organize the collection.\n    \n- Add more [scripts](https://learning.postman.com/docs/writing-scripts/intro-to-scripts/) to verify if the API works as expected and execute workflows.\n    \n\n## 💡Related templates\n\n[API testing basics](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=e9a37a28-055b-49cd-8c7e-97494a21eb54&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)  \n[API documentation](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=e9c28f47-1253-44af-a2f3-20dce4da1f18&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)  \n[Authorization methods](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=31a9a6ed-4cdf-4ced-984c-d12c9aec1c27&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "35575748"
+	},
+	"item": [
+		{
+			"name": "/ocr",
+			"item": [
+				{
+					"name": "OCR .jpeg",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"});",
+									"",
+									"// Extract task_id from the response and set it as an collection variable",
+									"let response = pm.response.json();",
+									"",
+									"// Regular expression for UUID4 validation",
+									"const uuid4Regex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;",
+									"",
+									"// Check that the response contains 'task_id'",
+									"pm.test(\"Response has 'task_id'\", function () {",
+									"    pm.expect(response).to.have.property('task_id');",
+									"});",
+									"",
+									"// Validate that 'task_id' is a UUID4",
+									"pm.test(\"task_id is a valid UUID4\", function () {",
+									"    pm.expect(response.task_id).to.match(uuid4Regex);",
+									"});",
+									"",
+									"// Validate statu",
+									"pm.test(\"Status is 'completed'\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.equal(\"completed\");",
+									"});",
+									"",
+									"// Validate page array not empty",
+									"pm.test(\"Page info is not empty\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.page_info).to.be.an('array').that.is.not.empty;",
+									"});",
+									"",
+									"",
+									"",
+									"// Write task_id as collection variable to test the fetching of results",
+									"let taskId = response.task_id;",
+									"pm.collectionVariables.set(\"task_id\",taskId);",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Set the body mode to form-data",
+									"pm.request.body.mode = \"formdata\";",
+									"",
+									"// Get the variable value from the Postman collection",
+									"let test_file = pm.collectionVariables.get(\"test_jpg\");",
+									"",
+									"// Set the form-data with the variable value for the file name",
+									"pm.request.body.update({",
+									"    mode: 'formdata',",
+									"    formdata: [",
+									"        {",
+									"            key: 'file',",
+									"            type: 'file',",
+									"            src: test_file",
+									"        }",
+									"    ]",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{base_url}}/ocr",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"ocr"
+							],
+							"query": [
+								{
+									"key": "lang",
+									"value": "",
+									"description": "Detection Language",
+									"disabled": true
+								},
+								{
+									"key": "dpi",
+									"value": "",
+									"description": "DPI for analysis & PDF rendering",
+									"disabled": true
+								},
+								{
+									"key": "psm",
+									"value": "",
+									"description": "PSM Mode",
+									"disabled": true
+								},
+								{
+									"key": "config",
+									"value": "",
+									"description": "Configuration string to set tesseract options",
+									"disabled": true
+								}
+							]
+						},
+						"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "/start_ocr",
+			"item": [
+				{
+					"name": "Async OCR .pdf",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"});",
+									"",
+									"// Extract task_id from the response and set it as an collection variable",
+									"let response = pm.response.json();",
+									"",
+									"// Regular expression for UUID4 validation",
+									"const uuid4Regex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;",
+									"",
+									"// Check that the response contains 'task_id'",
+									"pm.test(\"Response has 'task_id'\", function () {",
+									"    pm.expect(response).to.have.property('task_id');",
+									"});",
+									"",
+									"// Validate that 'task_id' is a UUID4",
+									"pm.test(\"task_id is a valid UUID4\", function () {",
+									"    pm.expect(response.task_id).to.match(uuid4Regex);",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Set the body mode to form-data",
+									"pm.request.body.mode = \"formdata\";",
+									"",
+									"// Get the variable value from the Postman collection",
+									"let test_file = pm.collectionVariables.get(\"test_jpg\");",
+									"",
+									"// Set the form-data with the variable value for the file name",
+									"pm.request.body.update({",
+									"    mode: 'formdata',",
+									"    formdata: [",
+									"        {",
+									"            key: 'file',",
+									"            type: 'file',",
+									"            src: test_file",
+									"        }",
+									"    ]",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{base_url}}/start_ocr",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"start_ocr"
+							],
+							"query": [
+								{
+									"key": "lang",
+									"value": "eng",
+									"description": "Detection Language",
+									"disabled": true
+								},
+								{
+									"key": "dpi",
+									"value": "3",
+									"description": "DPI for analysis & PDF rendering",
+									"disabled": true
+								},
+								{
+									"key": "psm",
+									"value": "",
+									"description": "PSM Mode",
+									"disabled": true
+								},
+								{
+									"key": "config",
+									"value": "",
+									"description": "Configuration string to set tesseract options",
+									"disabled": true
+								}
+							]
+						},
+						"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "/results",
+			"item": [
+				{
+					"name": "Get Result",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"// Get the response JSON",
+									"let response = pm.response.json();",
+									"",
+									"// Validate status",
+									"pm.test(\"Status is 'completed'\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.equal(\"completed\");",
+									"});",
+									"",
+									"// Validate page array not empty",
+									"pm.test(\"Page info is not empty\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.page_info).to.be.an('array').that.is.not.empty;",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"packages": {},
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/results/{{task_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"results",
+								"{{task_id}}"
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "/jobs",
+			"item": [
+				{
+					"name": "Pending Jobs",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"// Get the response JSON",
+									"let response = pm.response.json();",
+									"",
+									"",
+									"// Verify that all jobs are pending or running",
+									"pm.test(\"All jobs have status 'running' or 'pending'\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    jsonData.jobs.forEach(function(job) {",
+									"        pm.expect(job.status).to.be.oneOf([\"running\", \"pending\"]);",
+									"    });",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/jobs?status=pending",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"jobs"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "pending"
+								}
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				},
+				{
+					"name": "All Jobs",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"// Get the response JSON",
+									"let response = pm.response.json();",
+									"",
+									"// ",
+									"pm.test(\"Tesseract Languages list is not empty\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[\"jobs\"]).to.be.an('array').that.is.not.empty;",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/jobs?status=all",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"jobs"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "all"
+								}
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "/info",
+			"item": [
+				{
+					"name": "Get Info",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"// Get the response JSON",
+									"let response = pm.response.json();",
+									"",
+									"// Verify that the body has the key 'status'",
+									"pm.test(\"Response has 'Tesseract Version' key\", function () {",
+									"    pm.expect(response).to.have.property('Tesseract Version');",
+									"});",
+									"",
+									"// ",
+									"pm.test(\"Check that Installed Tesseract Languages list is not empty\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[\"Installed Tesseract Languages\"]).to.be.an('array').that.is.not.empty;",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/info",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"info"
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "/health",
+			"item": [
+				{
+					"name": "Check Health",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"// Get the response JSON",
+									"let response = pm.response.json();",
+									"",
+									"// Verify that the body has the key 'status'",
+									"pm.test(\"Response has 'status' key\", function () {",
+									"    pm.expect(response).to.have.property('status');",
+									"});",
+									"",
+									"// Verify that the value of 'status' is 'healthy'",
+									"pm.test(\"Status value is 'healthy'\", function () {",
+									"    pm.expect(response.status).to.eql(\"healthy\");",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/health",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"health"
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://0.0.0.0:8000"
+		},
+		{
+			"key": "test_jpg",
+			"value": "tests/test_jpeg.jpeg",
+			"type": "string"
+		},
+		{
+			"key": "test_png",
+			"value": "tests/test_png.png",
+			"type": "string"
+		},
+		{
+			"key": "test_pdf",
+			"value": "tests/test_doc.pdf\n",
+			"type": "string"
+		},
+		{
+			"key": "task_id",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

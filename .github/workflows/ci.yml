@@ -58,7 +58,7 @@ jobs:
 
       - name: Test API endpoints
         run: |
-          newman run tests/tesseract-api-test.postman_collection.json --delay-request 10000
+          newman run tests/light-api-test.postman_collection.json --delay-request 10000
 
       - name: Build and push
         uses: docker/build-push-action@v5
