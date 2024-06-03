@@ -1,14 +1,56 @@
+![CI Worklfow](https://github.com/jannichorst/tesseract-container/actions/workflows/ci.yml/badge.svg)
+
 # Tesseract Container
 
-This repository contains a FastAPI application that uses [Tesseract OCR](https://github.com/tesseract-ocr/tesseract) to extract text from images. The application exposes several endpoints to upload images, retrieve analysis results and check the health of the service.
+This repository contains a FastAPI application that uses [Tesseract OCR](https://github.com/tesseract-ocr/tesseract) to extract text from images and PDFs. The application exposes several endpoints to upload files, retrieve analysis results, generate searchable PDFs, and check the health of the service.
+## ✨ Features
+- ✅ OCR on Images and PDFs
+- ✅ REST Endpoints
+- ✅ Sync / Async Support
+- ✅ Create searchable PDFs
+- ✅ Add more languages with ease
 
-## Getting Started
+## 📖 Contents
+- [👩‍💻 Getting Started](#getting-started)
+- [🐳 Build Your Own Image](#build-image)
+- [🔗 Endpoints](#endpoints)
+- [🛠️ About this Repository](#about)
+- [📚 References](#references)
 
-### Prerequisites
+ <a name="getting-started"/> 
 
-- [Docker](https://www.docker.com/get-started)
+## 👩‍💻 Getting Started
 
-### Installation
+### 1. Pull Image
+```sh
+docker pull jannichorst/tesseract-container:latest
+```
+
+### 2. Run Container
+```sh
+docker run -d -p 8000:8000 jannichorst/tesseract-container:latest
+```
+
+### 3. Usage
+```python
+import requests
+
+url = "http://localhost:8000/ocr/"
+file_path = "path_to_your_image_or_pdf.jpg"
+
+with open(file_path, "rb") as file:
+    files = {"file": file}
+    response = requests.post(url, files=files, data=params)
+
+print("OCR Result:", response.json())
+```
+
+> **Check out all examples in the [demo.iypnb](examples/demo.ipynb) notebook**
+
+ <a name="build-image"/> 
+
+## 🐳 Build Image Yourself
+> For the full guide on how to add more languages see: [How to add lmore anguages](docs/add_languages.md)
 
 1. Clone the repository:
 
@@ -22,31 +64,47 @@ This repository contains a FastAPI application that uses [Tesseract OCR](https:/
     ```sh
     ./scripts/build_and_run.sh
     ```
+
 3. Access the Swagger documentation under [http://localhost:8000/docs](http://localhost:8000/docs).
-4. Checkout the examples in [demo.ipynb](demo.ipynb) and install the required packages with:
+
+4. Check out the examples in [demo.ipynb](demo.ipynb) and install the required packages with:
+
     ```sh
     pip install -r requirements.txt
-    ``` 
-    
+    ```
+ <a name="endpoints"/> 
 
-## Endpoints
+## 🔗 Endpoints
 
-### Upload Image for Analysis
+### Perform OCR [SYNC]
 
-- **URL**: `/analyzeDocument/`
+- **URL**: `/ocr/`
 - **Method**: `POST`
-- **Request**: Multipart/form-data with an image file
+- **Request**: Multipart/form-data with a file, language (default: "eng"), DPI (optional), config (optional), and PSM (default: 3)
+- **Response**: JSON containing OCR results and job information
+
+Example using `curl`:
+
+```sh
+curl -X POST "http://localhost:8000/ocr/" -F "file=@path_to_your_file"
+```
+
+### Start OCR Processing [ASYNC]
+
+- **URL**: `/start_ocr/`
+- **Method**: `POST`
+- **Request**: Multipart/form-data with a file, language (default: "eng"), DPI (optional), config (optional), and PSM (default: 3)
 - **Response**: JSON containing a task ID
 
 Example using `curl`:
 
 ```sh
-curl -X POST "http://localhost:8000/analyzeDocument/" -F "file=@path_to_your_image_file"
+curl -X POST "http://localhost:8000/start_ocr/" -F "file=@path_to_your_file"
 ```
 
-### Get Analysis Results
+### Get OCR Results
 
-- **URL**: `/analyzeResults/{task_id}`
+- **URL**: `/results/{task_id}`
 - **Method**: `GET`
 - **Request**: Path parameter with the task ID
 - **Response**: JSON containing the OCR results or the status of the task
@@ -54,7 +112,45 @@ curl -X POST "http://localhost:8000/analyzeDocument/" -F "file=@path_to_your_ima
 Example using `curl`:
 
 ```sh
-curl "http://localhost:8000/analyzeResults/{task_id}"
+curl "http://localhost:8000/results/{task_id}"
+```
+
+### Create Searchable PDF [SYNC]
+
+- **URL**: `/create_searchable/`
+- **Method**: `POST`
+- **Request**: Multipart/form-data with a file, language (default: "eng"), DPI (optional), PSM (default: 3), and config (optional)
+- **Response**: Searchable PDF file
+
+Example using `curl`:
+
+```sh
+curl -X POST "http://localhost:8000/create_searchable/" -F "file=@path_to_your_file" --output output_ocr.pdf
+```
+
+### Get Jobs
+
+- **URL**: `/jobs`
+- **Method**: `GET`
+- **Request**: Query parameter for status (default: "pending")
+- **Response**: JSON containing job information
+
+Example using `curl`:
+
+```sh
+curl "http://localhost:8000/jobs?status=all"
+```
+
+### Get System Information
+
+- **URL**: `/info`
+- **Method**: `GET`
+- **Response**: JSON containing system information
+
+Example using `curl`:
+
+```sh
+curl "http://localhost:8000/info"
 ```
 
 ### Health Check
@@ -69,32 +165,17 @@ Example using `curl`:
 curl "http://localhost:8000/health"
 ```
 
-### List File System Structure
-
-- **URL**: `/fs`
-- **Method**: `GET`
-- **Response**: JSON representation of the file system structure
-
-Example using `curl`:
-
-```sh
-curl "http://localhost:8000/fs"
-```
-
 ### Swagger Documentation
 
 - **URL**: `/docs`
 - **Method**: `GET`
 - **Response**: Autogenerated documentation & testing area
 
+ <a name="about"/> 
 
-## Examples
+## About this Repository
 
-This repository includes a Jupyter notebook called [demo.ipynb](demo.ipynb) which contains examples on how to use the provided endpoints. You can find the notebook in the root directory of the repository.
-
-## Source Code
-
-The main application code is located in `src/app/main.py`. The Dockerfile and scripts for building and running the container are located in the root directory and the `scripts` directory, respectively.
+The main application code is located in `src/app/main.py`. The Dockerfile and scripts for building and running the container are located in the root directory and the `scripts` directory, respectively. Under `tests` you find a Postman collection that can be run with `run-postman-collection.sh` (needs [Newman CLI](https://github.com/postmanlabs/newman)). 
 
 ### Directory Structure
 
@@ -102,18 +183,26 @@ The main application code is located in `src/app/main.py`. The Dockerfile and sc
 tesseract-container
 ├── Dockerfile
 ├── README.md
-├── demo.ipynb
+├── requirements.txt
+├── examples
+│   └── demo.ipynb
 ├── scripts
 │   ├── build.sh
 │   ├── run.sh
-│   └── build_and_run.sh
-└── src
-    ├── requirements.txt
-    └── app
-        ├── main.py
-        └── ...
+│   ├── build_and_run.sh
+│   └── run-postman-collection.sh
+├── src
+│   ├── requirements.txt
+│   └── app
+│       ├── main.py
+│       └── ...
+├── tests
+│   ├── postman_collection.json
+│   ├── test-image.jpg
+│   └── ...
 ```
-
+ <a name="references"/> 
+ 
 ## References
 
 - [FastAPI Documentation](https://fastapi.tiangolo.com/)
