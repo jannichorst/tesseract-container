@@ -2,11 +2,11 @@ name: CI
 
 on:
   push:
-  paths-ignore:
-      - '**/README.md'
-      - 'README.md'
-      - 'tests/**'
-      - 'scripts/**'
+    paths-ignore:
+        - '**/README.md'
+        - 'README.md'
+        - 'tests/**'
+        - 'scripts/**'
 
 env:
   TEST_TAG: user/app:test
