@@ -154,7 +154,7 @@ curl "http://localhost:8000/health"
 
 ## 🐳 Build Image Yourself
 >[!NOTE]
->For the full guide on how to add more languages see: [How to add lmore anguages](docs/add_languages.md)
+>For the full guide on how to add more languages see: [How to add lmore anguages](docs/Install-different-language.md)
 
 1. Clone the repository:
 
