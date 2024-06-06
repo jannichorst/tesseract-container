@@ -48,7 +48,8 @@ with open(file_path, "rb") as file:
 print("OCR Result:", response.json())
 ```
 
-> **Check out all examples in the [demo.iypnb](examples/demo.ipynb) notebook**
+> [!NOTE]
+> **Check out more examples in the [demo.iypnb](examples/demo.ipynb) notebook**
 
  <a name="endpoints"/> 
 
@@ -152,7 +153,8 @@ curl "http://localhost:8000/health"
  <a name="build-image"/> 
 
 ## 🐳 Build Image Yourself
-> For the full guide on how to add more languages see: [How to add lmore anguages](docs/add_languages.md)
+>[!NOTE]
+>For the full guide on how to add more languages see: [How to add lmore anguages](docs/add_languages.md)
 
 1. Clone the repository:
 
