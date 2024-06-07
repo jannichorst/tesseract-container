@@ -24,12 +24,12 @@ This repository contains a FastAPI application that uses [Tesseract OCR](https:/
 
 ### 1. Pull Image
 ```sh
-docker pull jannichorst/tesseract-container:latest
+docker pull jannichorst/tesseract-ocr:latest
 ```
 
 ### 2. Run Container
 ```sh
-docker run -d -p 8000:8000 jannichorst/tesseract-container:latest
+docker run -d -p 8000:8000 jannichorst/tesseract-ocr:latest
 ```
 
 ### 3. Usage
