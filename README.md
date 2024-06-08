@@ -211,6 +211,8 @@ tesseract-container
 
 ## References
 
-- [FastAPI Documentation](https://fastapi.tiangolo.com/)
 - [Tesseract OCR](https://github.com/tesseract-ocr/tesseract)
+- [Improve Tesseract Performance (Guide)](https://tesseract-ocr.github.io/tessdoc/ImproveQuality.html)
+- [Tesseract Page Segmentation Modes (PSM) Exaplaind](https://pyimagesearch.com/2021/11/15/tesseract-page-segmentation-modes-psms-explained-how-to-improve-your-ocr-accuracy/)
+- [FastAPI Documentation](https://fastapi.tiangolo.com/)
 - [Docker Documentation](https://docs.docker.com/)
